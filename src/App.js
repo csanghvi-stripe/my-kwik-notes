@@ -11,6 +11,7 @@ import NoteCreate from './components/notes/NoteCreate';
 import NoteList from './components/notes/NoteList';
 import NoteBuild from './components/notes/NoteBuild';
 import NoteManager from './components/notes/NoteManager';
+import { connect } from 'react-redux';
 import './App.css';
 
 
@@ -28,10 +29,10 @@ class App extends Component {
       <Router>
         <div>
           <div>
-                  <SideBar/>
+              <SideBar/>
           </div>
           <div>
-          <Header />
+              <Header />
           </div>
           <div className="ui container">
           <Switch>
@@ -49,4 +50,13 @@ class App extends Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    currentUserId: state.auth.userId,
+    isSignedIn: state.auth.isSignedIn
+  };
+};
+export default connect(
+  mapStateToProps,
+  { }
+)(App);
