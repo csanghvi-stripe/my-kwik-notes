@@ -1,87 +1,86 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import Modal from 'react-modal';
-import { Dropdown} from "semantic-ui-react";
-
-const customStyles = {
-  content : {
-    top                   : '50%',
-    left                  : '50%',
-    right                 : 'auto',
-    bottom                : 'auto',
-    marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)',
-    color: 'lightsteelblue',
-    opacity:1
-  },
-  overlay: {
-    backgroundColor: 'papayawhip',
-    opacity:1
-  }
-};
+import { Link } from 'react-router-dom';
+import Modal from '../Modal';
+import history from '../../history';
+import {Dropdown} from 'semantic-ui-react'
 
 
-
-// Make sure to bind modal to your appElement (http://reactcommunity.org/react-modal/accessibility/)
-Modal.setAppElement(document.getElementById('root'));
-
-export default class NoteRemove extends React.Component {
-  constructor() {
-    super();
-
+class NoteRemove extends React.Component {
+  constructor(props){
+    super(props)
     this.state = {
-      modalIsOpen: false
-    };
-
-    this.openModal = this.openModal.bind(this);
-    this.afterOpenModal = this.afterOpenModal.bind(this);
-    this.closeModal = this.closeModal.bind(this);
+      show:false
+    }
+    console.log("Current note is %o", this.props.currentNote);
   }
 
-  openModal() {
-    this.setState({modalIsOpen: true});
+  setShow = () => {
+    this.setState({
+      show:true
+    })
+  }
+  unSetShow() {
+    this.setState({
+      show:false
+    })
   }
 
-  afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    this.subtitle.style.color = '#f00';
+  deleteNote(){
+    console.log("Delete note with id %o", this.props.currentNote);
+    this.props.onSelectRemove(this.props.currentNote)
+    this.setState({
+      show:false
+    })
+
   }
 
-  closeModal() {
-    this.setState({modalIsOpen: false});
+  renderActions() {
+    return (
+      <React.Fragment>
+        <button
+          onClick={() => this.deleteNote()}
+          className="ui button negative"
+        >
+          Delete
+        </button>
+        <button
+          onClick={() => this.unSetShow()}
+          className="ui button negative"
+        >
+          Cancel
+        </button>
+      </React.Fragment>
+    );
   }
+
+  renderContent() {
+      return 'Are you sure you want to delete this note?';
+  }
+
 
   render() {
     return (
-      <div>
-        <Dropdown text="Options">
+
+      <div className="right floated content">
+        <Dropdown icon='setting' floating button className='icon'>
           <Dropdown.Menu>
-            <Dropdown.Item
-              text="Delete"
-              onClick={this.openModal}
-            />
+            <Dropdown.Item onClick={this.setShow}>Delete</Dropdown.Item>
+            <Dropdown.Item>Share</Dropdown.Item>
+            <Dropdown.Item>Change Notebook</Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
+      {this.state.show === true && (
         <Modal
-          isOpen={this.state.modalIsOpen}
-          onAfterOpen={this.afterOpenModal}
-          onRequestClose={this.closeModal}
-          style={customStyles}
-          contentLabel="Example Modal"
-        >
+          title="Delete Note"
+          content={this.renderContent()}
+          actions={this.renderActions()}
+          onDismiss={() => this.unSetShow()}
+        />
+      )}
+    </div>
 
-          <h2 ref={subtitle => this.subtitle = subtitle}>Hello</h2>
-          <button onClick={this.closeModal}>close</button>
-          <div>I am a modal</div>
-          <form>
-            <input />
-            <button>tab navigation</button>
-            <button>stays</button>
-            <button>inside</button>
-            <button>the modal</button>
-          </form>
-        </Modal>
-      </div>
     );
   }
 }
+
+export default NoteRemove;

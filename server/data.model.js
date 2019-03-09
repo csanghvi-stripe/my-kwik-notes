@@ -14,7 +14,7 @@ const Notes = new Schema({
     tags: {
         type: [String]
     },
-    user:{
+    user_email:{
       type: String
     },
     shared:{
@@ -27,21 +27,28 @@ const Notes = new Schema({
 },{ strict: false });
 
 const Users = new Schema({
-    name: {
-        type: String
-    },
-    email: {
-        type: String
-    },
-    mynotes: {
-        type: [String]
-    },
-    sharednotes: {
-        type: [String]
-    },
-    notebooks:{
-      type:[String]
-    }
-},{ strict: false });
-
-module.exports = mongoose.model('Notes', Notes);//, mongoose.model('Users', Users)}
+  user_id: {
+    type: String
+  },
+  family_name: {
+    type: String
+  },
+  given_name: {
+    type: String
+  },
+  user_email: {
+    type: String
+  },
+  mynotes: {
+    type: [String]
+  },
+  sharednotes: {
+    type: [String]
+  },
+  notebooks: {
+    type: [String]
+  }
+}, {
+  strict: false
+});
+module.exports = [mongoose.model('Notes', Notes), mongoose.model('Users', Users)]

@@ -11,36 +11,49 @@ import NoteCreate from './components/notes/NoteCreate';
 import NoteList from './components/notes/NoteList';
 import NoteBuild from './components/notes/NoteBuild';
 import NoteManager from './components/notes/NoteManager';
+import history from './history';
 import { connect } from 'react-redux';
 import './App.css';
 
 
-const Home = () => {
-  return (
-  <div>Test</div>
-  )
-}
 
 class App extends Component {
+  renderSidebar() {
+  if (this.props.isSignedIn) {
+    return (
+      <div>
+          <SideBar/>
+      </div>
+    );
+  }
+}
+renderNoteManager() {
+  if (this.props.isSignedIn) {
+    return (
+      <div>
+          <NoteManager/>
+      </div>
+    );
+  }
+}
   render() {
     return (
     <div>
 
-      <Router>
+      <Router history={history}>
         <div>
-          <div>
-              <SideBar/>
-          </div>
-          <div>
+
+          {this.renderSidebar()}
+          <div className="ui container">
               <Header />
           </div>
           <div className="ui container">
+            {this.renderNoteManager()}
+
           <Switch>
-            <Route path="/" exact component={Home} />
             <Route path="/create" component={NoteCreate} />
             <Route path="/list" component={NoteList} />
             <Route path="/build" component={NoteBuild} />
-            <Route path="/manage" component={NoteManager} />
           </Switch>
         </div>
       </div>
@@ -52,7 +65,7 @@ class App extends Component {
 
 const mapStateToProps = state => {
   return {
-    currentUserId: state.auth.userId,
+    currentUserObj: state.auth.userObj,
     isSignedIn: state.auth.isSignedIn
   };
 };

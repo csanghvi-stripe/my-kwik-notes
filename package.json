@@ -11,6 +11,7 @@
     "flv.js": "^1.4.2",
     "formidable": "^1.2.1",
     "fs": "0.0.1-security",
+    "google-auth-library": "^3.1.0",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "mongoose": "^5.4.0",
