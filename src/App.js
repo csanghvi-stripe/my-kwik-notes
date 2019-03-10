@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
-//import NoteCreate from './components/notes/NoteCreate';
-//import NoteEdit from './components/notes/NoteEdit';
-//import NoteDelete from './components/notes/NoteDelete';
-//import NoteList from './components/notes/NoteList';
-//import NoteShow from './components/notes/NoteShow';
+import { Message } from 'semantic-ui-react'
 import Header from './components/Header';
 import SideBar from './components/Sidebar';
 import NoteCreate from './components/notes/NoteCreate';
@@ -35,6 +31,22 @@ renderNoteManager() {
     );
   }
 }
+renderLoginFailure(){
+  if (this.props.isSignedIn === null) {
+    return null;
+  } else if (!this.props.isSignedIn) {
+    return (
+      <div className="ui one column stackable center">
+        <div clasName="column twelve wide">
+        <Message negative>
+          <Message.Header>Failed to login with reason: {this.props.loginError}.</Message.Header>
+          <p>Maybe try clearing cache first?</p>
+        </Message>
+        </div>
+      </div>
+    );
+  }
+}
   render() {
     return (
     <div>
@@ -46,7 +58,9 @@ renderNoteManager() {
           <div className="ui container">
               <Header />
           </div>
+
           <div className="ui container">
+            {this.renderLoginFailure()}
             {this.renderNoteManager()}
 
           <Switch>
@@ -65,7 +79,9 @@ renderNoteManager() {
 const mapStateToProps = state => {
   return {
     currentUserObj: state.auth.userObj,
-    isSignedIn: state.auth.isSignedIn
+    isSignedIn: state.auth.isSignedIn,
+    loginError:state.auth.loginError
+
   };
 };
 export default connect(

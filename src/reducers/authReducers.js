@@ -3,7 +3,7 @@ import { SIGN_IN, SIGN_OUT, SIGN_IN_FAILURE } from '../actions/types';
 const INTIAL_STATE = {
   isSignedIn: null,
   userObj: null,
-  error:null
+  loginError:null
 };
 
 export default (state = INTIAL_STATE, action) => {
@@ -13,7 +13,7 @@ export default (state = INTIAL_STATE, action) => {
     case SIGN_OUT:
       return { ...state, isSignedIn: false, userObj: null };
     case SIGN_IN_FAILURE:
-      return { ...state, isSignedIn: false, error: action.payload };
+      return { ...state, isSignedIn: false, loginError: action.payload };
     default:
       return state;
   }
