@@ -3,7 +3,6 @@ import { BrowserRouter as Router} from "react-router-dom";
 import { Message } from 'semantic-ui-react'
 import Header from './components/Header';
 import SideBar from './components/Sidebar';
-import NoteBuild from './components/notes/NoteBuild';
 import NoteManager from './components/notes/NoteManager';
 import { connect } from 'react-redux';
 import './App.css';

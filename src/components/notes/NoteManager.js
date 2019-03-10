@@ -352,17 +352,17 @@ class NoteManager extends React.Component {
 
 render() {
   return (<div className="ui container">
-    <Divider hidden="hidden"/>
+    <Divider hidden/>
     <div>
       <Container textAlign='right'>
-        <Grid columns={4} stackable="stackable" textAlign='right'>
+        <Grid columns={4} stackable textAlign='right'>
           <Grid.Row verticalAlign='middle'>
             <Grid.Column width={2}>
               <h3>Notebook:</h3>
             </Grid.Column>
             <Grid.Column width={2}>
 
-              <Dropdown placeholder={this.state.currentNotebook} selection="selection" options={dditems.concat(this.state.notebooks)} value={this.state.currentNotebook} onChange={this.setCurrentNotebook}/> {this.state.currentNotebook === 'Create' && (<NotebookCreate createNewNotebook={(value) => this.createNewNotebook(value)} setCurrentNotebook={() => this.setDefaultCurrentNotebook()}/>)}
+              <Dropdown placeholder={this.state.currentNotebook} selection options={dditems.concat(this.state.notebooks)} value={this.state.currentNotebook} onChange={this.setCurrentNotebook}/> {this.state.currentNotebook === 'Create' && (<NotebookCreate createNewNotebook={(value) => this.createNewNotebook(value)} setCurrentNotebook={() => this.setDefaultCurrentNotebook()}/>)}
             </Grid.Column>
             <Grid.Column width={8}>
 
@@ -382,21 +382,21 @@ render() {
 
       </Container>
     </div>
-    <Divider hidden="hidden"/>
+    <Divider hidden/>
     <div>
       {
         this.state.notes.length === 0
-          ? (<Segment placeholder="placeholder">
-            <Header icon="icon">
+          ? (<Segment placeholder>
+            <Header icon>
               <Icon name='pdf file outline'/>
               No notes are listed under this Notebook.
             </Header>
-            <Button primary="primary" onClick={this.createNewNote}>Create First Note</Button>
+            <Button primary onClick={this.createNewNote}>Create First Note</Button>
           </Segment>)
           : (<div className='ui Container'>
             <Grid columns={2} relaxed='very'>
               <Grid.Column>
-                <List divided="divided" selection="selection" verticalAlign='middle'>
+                <List divided selection verticalAlign='middle'>
                   {this.notesList(this.state.filterText)}
                 </List>
               </Grid.Column>
