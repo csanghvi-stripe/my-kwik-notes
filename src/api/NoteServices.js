@@ -12,7 +12,7 @@ const axiosApi = axios.create({
 axiosApi.interceptors.request.use(
   (config) => {
     let token = sessionStorage.getItem('jwt');
-    console.log("JWT token is %o", token)
+
 
     if (token) {
       config.headers['Authorization'] = `Bearer ${ token }`;
@@ -150,9 +150,9 @@ const removeNote = (id) => {
 
     return new Promise((resolve, reject) => {
         axiosApi
-            .delete(`notes/notes/${id}`)
-            .then(() => {
-                resolve();
+            .delete(`notes/delete/${id}`)
+            .then((rsp) => {
+                resolve(rsp);
                 return;
             })
             .catch(error => {
@@ -201,7 +201,6 @@ const login = (userToken) => {
         axios
             .post(`${process.env.REACT_APP_LOGIN_URL}`, data)
             .then((rsp) => {
-              console.log("Received rsp is %o", rsp);
                 resolve(rsp);
                 return;
             })
@@ -224,6 +223,7 @@ module.exports = {
     'findNote': findNote,
     'listNotes': listNotes,
     'updateNote': updateNote,
+    'removeNote': removeNote,
     'addNotebook':addNotebook,
     'getNotebooks':getNotebooks
 };

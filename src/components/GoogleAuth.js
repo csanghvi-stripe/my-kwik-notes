@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { signIn, signOut } from '../actions';
-import SignOut from './SignOut'
+import UserOptions from './UserOptions'
 
 class GoogleAuth extends React.Component {
   componentDidMount() {
@@ -41,7 +41,7 @@ class GoogleAuth extends React.Component {
       return null;
     } else if (this.props.isSignedIn) {
       return (
-          <SignOut onSignOutClick={this.onSignOutClick}/>
+          <UserOptions onSignOutClick={this.onSignOutClick}/>
       );
     } else {
       return (

@@ -1,16 +1,14 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Modal from '../Modal';
-import {Dropdown, Icon} from 'semantic-ui-react'
+import {Dropdown} from 'semantic-ui-react'
 
 
-class NoteRemove extends React.Component {
+class NoteOptions extends React.Component {
   constructor(props){
     super(props)
     this.state = {
       show:false
     }
-    console.log("Current note is %o", this.props.currentNote);
   }
 
   setShow = () => {
@@ -27,6 +25,7 @@ class NoteRemove extends React.Component {
   deleteNote(){
     console.log("Delete note with id %o", this.props.currentNote);
     this.props.onSelectRemove(this.props.currentNote)
+
     this.setState({
       show:false
     })
@@ -82,4 +81,4 @@ class NoteRemove extends React.Component {
   }
 }
 
-export default NoteRemove;
+export default NoteOptions;

@@ -144,6 +144,23 @@ appRoutes.route('/').post(async function(req, res) {
 });
 
 
+notesRoutes.route('/delete/:id').delete(function(req, res) {
+  let id = req.params.id;
+  console.log("Request to delete note with id %o", id);
+
+  Notes.remove({
+    _id: id
+  }, function(err, note) {
+    if (!err) {
+      res.json({
+        status:'Success',
+        message: `deleted ${ req.params.id }`
+      })
+    } else {
+      res.send(err);
+    }
+  });
+});
 
 notesRoutes.route('/:id').get(function(req, res) {
   let id = req.params.id;

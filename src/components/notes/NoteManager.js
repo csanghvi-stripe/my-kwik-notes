@@ -2,15 +2,14 @@
 import React from 'react'
 import Moment from 'react-moment';
 
-import ReactDOM from 'react-dom';
 import { EditorState, ContentState } from 'draft-js';
 import { Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { connect } from 'react-redux';
 
-import {Form, Modal,Dropdown, Menu, Header, Input, Icon, Container, Button, Divider, Grid, Image, Segment, List } from 'semantic-ui-react'
+import {Form,Dropdown, Header, Input, Icon, Container, Button, Divider, Grid, Segment, List } from 'semantic-ui-react'
 import { convertFromRaw, convertToRaw } from 'draft-js';
-import NoteRemove from './NoteRemove';
+import NoteOptions from './NoteOptions';
 
 import NotebookCreate from './NotebookCreate';
 
@@ -26,7 +25,6 @@ const dditems = [
 
 
 const Notes = props => {
-  console.log(props);
   return (
   <List.Item id={props.note._id} value={props.note._id} onClick={() => {props.onNoteSelect(props.note._id)}}>
       <List.Content>
@@ -39,7 +37,7 @@ const Notes = props => {
             </Grid.Column>
             <Grid.Column>
               <List.Header>
-                <NoteRemove currentNote={props.note._id} onSelectRemove={props.onSelectRemove}/>
+                <NoteOptions currentNote={props.note._id} onSelectRemove={props.onSelectRemove}/>
               </List.Header>
             </Grid.Column>
           </Grid.Row>
@@ -108,7 +106,6 @@ class NoteManager extends React.Component {
     this.setState({currentNote:id})
   }
   setCurrentNotebook(e, {value}) {
-    console.log('notebook selected', value);
     this.setState({currentNotebook:value})
     this.notebookUpdated(value);
   }
@@ -117,7 +114,6 @@ class NoteManager extends React.Component {
     this.notebookUpdated("Default");
   }
   onTitleChange(e){
-    console.log("Title is %s", e.target.value);
     this.setState({title:e.target.value});
   }
 
@@ -128,7 +124,6 @@ class NoteManager extends React.Component {
   }
 
   createNewNote(e) {
-    console.log("Tine to create new content with %o for %o", this.props.currentUserObj.user_email);
     //Make an API call to create a document in mongo
     //Get document id & use it as id for this new entry
     var note = {
@@ -139,11 +134,9 @@ class NoteManager extends React.Component {
     NoteService
     .addNote(note.title, note.description, note.content, this.props.currentUserObj.user_email, this.state.currentNotebook)
     .then(newNote => {
-      console.log("Created nore notes are %o", newNote);
         NoteService
             .listNotes(this.props.currentUserObj.user_email, this.state.currentNotebook)
             .then(notes => {
-              console.log("Received notes are %o", notes);
                 this.setState({notes});
                 this.setCurrentNote(newNote.id);
                 this.setState({title:''});
@@ -158,7 +151,6 @@ class NoteManager extends React.Component {
   }
 
   createNewNotebook(name) {
-    console.log("Tine to create new notebook with %o for %o", name);
     //Make an API call to create a document in mongo
     //Get document id & use it as id for this new entry
     this.state.notebooks.push({
@@ -173,7 +165,6 @@ class NoteManager extends React.Component {
     NoteService
         .addNotebook(this.props.currentUserObj.user_email, name)
         .then(rsp => {
-          console.log("Notebooks received are %o", notebooks);
           const notebooks = rsp.map((element,i)=>{
             return {
               key:dditems.length+1+i,
@@ -193,12 +184,38 @@ class NoteManager extends React.Component {
   }
 
   onSelectRemove = (id) => {
-    console.log("Time to delete the note with id %o", id);
+    NoteService
+              .removeNote(id)
+              .then((rsp)=>{
+                if (rsp.data.status === 'Success'){
+                  //Update state.
+                  NoteService
+                      .listNotes(this.props.currentUserObj.user_email, this.state.currentNotebook)
+                      .then(notes => {
+                          if (id === this.state.currentNote){
+                            this.setState({
+                              notes:notes,
+                              editorState: EditorState.createEmpty(),
+                              currentNote:'',
+                              title:''
+                            });
+                          } else {
+                            this.setState({notes});
+                            }
+
+                          return;
+                      })
+                      .catch(error => {
+                          console.log('Error in getting notes %o',error);
+                          return;
+                      })
+
+                }
+              })
   }
 
 
   notebookUpdated = (name) => {
-    console.log("Refetching everything %o", name);
     NoteService
         .listNotes(this.props.currentUserObj.user_email, name)
         .then(notes => {
@@ -218,7 +235,6 @@ class NoteManager extends React.Component {
       const editorState = EditorState.push(this.state.editorState, contentState);
       this.setState({ editorState});
      */
-      console.log("Content data is %o", contentData);
        const content  = convertFromRaw(contentData);
        this.setState({editorState: EditorState.createWithContent(content)});
 
@@ -234,7 +250,6 @@ class NoteManager extends React.Component {
     NoteService
         .getNotebooks(this.props.currentUserObj.user_email)
         .then(rsp => {
-          console.log("Notebooks received are %o & dditems length is %o", rsp, dditems.length);
           const notebooks = rsp.map((element,i)=>{
             return {
               key:dditems.length+1+i,
@@ -242,7 +257,6 @@ class NoteManager extends React.Component {
               text:element
             }
           });
-            console.log("Notebooks s %o", notebooks);
             this.setState({notebooks});
 
         })
@@ -264,7 +278,6 @@ class NoteManager extends React.Component {
 
 
   selectNote(id) {
-    console.log("Note selected %o", id);
     this.setCurrentNote(id)
     var note = this.state.notes.find(note => {return note._id === id});
     console.log(note);
@@ -276,10 +289,8 @@ class NoteManager extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    var {editorState} = this.state;
     var convertedData = convertToRaw(this.state.editorState.getCurrentContent())
-    console.log("Converted data is %o", convertedData);
-    console.log("Current note is %o", this.state.currentNote);
+
     var note = {}
     this.state.notes.map((currentNote, i) => {
           if (currentNote._id === this.state.currentNote){
@@ -291,6 +302,7 @@ class NoteManager extends React.Component {
                 title: this.state.title,
                 _id:this.state.currentNote
               }
+              return note;
 
           }
     })
@@ -302,6 +314,7 @@ class NoteManager extends React.Component {
             .listNotes(this.props.currentUserObj.user_email, this.state.currentNotebook)
             .then(notes => {
                 this.setState({notes});
+                return;
             })
             .catch(error => console.log(error));
     })
@@ -338,99 +351,102 @@ class NoteManager extends React.Component {
 
 
 render() {
-  return (
-    <div className="ui container">
-    <Divider hidden/>
+  return (<div className="ui container">
+    <Divider hidden="hidden"/>
     <div>
-    <Container textAlign='right'>
-    <Grid columns={4} stackable textAlign='right'>
-      <Grid.Row verticalAlign='middle'>
-        <Grid.Column width = {2}>
-          <h3>Notebook:</h3>
-        </Grid.Column>
-        <Grid.Column width = {2}>
+      <Container textAlign='right'>
+        <Grid columns={4} stackable="stackable" textAlign='right'>
+          <Grid.Row verticalAlign='middle'>
+            <Grid.Column width={2}>
+              <h3>Notebook:</h3>
+            </Grid.Column>
+            <Grid.Column width={2}>
 
-          <Dropdown placeholder={this.state.currentNotebook}
-            selection
-             options={dditems.concat(this.state.notebooks)} value={this.state.currentNotebook} onChange={this.setCurrentNotebook}/>
-           {this.state.currentNotebook === 'Create' && (
-      <NotebookCreate createNewNotebook={(value)=>this.createNewNotebook(value)} setCurrentNotebook={()=>this.setDefaultCurrentNotebook()}/>
-      )}
-        </Grid.Column>
-        <Grid.Column width = {8}>
+              <Dropdown placeholder={this.state.currentNotebook} selection="selection" options={dditems.concat(this.state.notebooks)} value={this.state.currentNotebook} onChange={this.setCurrentNotebook}/> {this.state.currentNotebook === 'Create' && (<NotebookCreate createNewNotebook={(value) => this.createNewNotebook(value)} setCurrentNotebook={() => this.setDefaultCurrentNotebook()}/>)}
+            </Grid.Column>
+            <Grid.Column width={8}>
 
-          <Input placeholder="Search Notes..." icon={{ name: 'search', circular: true, link: true }} value={this.state.filterText} onChange={this.onChangeFilterText}/>
-        </Grid.Column>
-        <Grid.Column width={4}>
-        <Button className="ui icon button" onClick={this.createNewNote}>
-          <Icon className="plus" size='large'/>
-        </Button>
-        </Grid.Column>
-      </Grid.Row>
-    </Grid>
+              <Input placeholder="Search Notes..." icon={{
+                  name: 'search',
+                  circular: true,
+                  link: true
+                }} value={this.state.filterText} onChange={this.onChangeFilterText}/>
+            </Grid.Column>
+            <Grid.Column width={4}>
+              <Button className="ui icon button" onClick={this.createNewNote}>
+                <Icon className="plus" size='large'/>
+              </Button>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
 
-
-
-     </Container>
+      </Container>
     </div>
-    <Divider hidden/>
+    <Divider hidden="hidden"/>
     <div>
-    {this.state.notes.length === 0 ? (
-    <Segment placeholder>
-      <Header icon>
-        <Icon name='pdf file outline' />
-        No notes are listed under this Notebook.
-      </Header>
-      <Button primary onClick={this.createNewNote}>Create First Note</Button>
-    </Segment>
-  ) : (
+      {
+        this.state.notes.length === 0
+          ? (<Segment placeholder="placeholder">
+            <Header icon="icon">
+              <Icon name='pdf file outline'/>
+              No notes are listed under this Notebook.
+            </Header>
+            <Button primary="primary" onClick={this.createNewNote}>Create First Note</Button>
+          </Segment>)
+          : (<div className='ui Container'>
+            <Grid columns={2} relaxed='very'>
+              <Grid.Column>
+                <List divided="divided" selection="selection" verticalAlign='middle'>
+                  {this.notesList(this.state.filterText)}
+                </List>
+              </Grid.Column>
+              <Grid.Column>
+                <div>
+                  <div id="comment-form-div">
+                    <Form name="title">
+                      <Form.Field>
+                        <input type='text' placeholder="Title" value={this.state.title} onChange={this.onTitleChange}/>
+                      </Form.Field>
+                    </Form>
+                    <Editor editorState={this.state.editorState} wrapperClassName="demo-wrapper" editorClassName="editer-content" placeholder="Enter some note..." onEditorStateChange={this.onChange} toolbar={{
+                        options: [
+                          'inline',
+                          'blockType',
+                          'fontSize',
+                          'colorPicker',
+                          'list',
+                          'link',
+                          'emoji',
+                          'image'
+                        ],
+                        inline: {
+                          inDropdown: true
+                        },
+                        list: {
+                          inDropdown: true
+                        },
+                        link: {
+                          inDropdown: true
+                        },
+                        history: {
+                          inDropdown: true
+                        }
+                      }}/>
+                  </div>
+                  <div id="comment-button-div">
+                    <Button onClick={this.handleSubmit} id="comment-submit-button" color="teal">Save</Button>
+                  </div>
+                </div>
+              </Grid.Column>
+            </Grid>
 
-  <div className='ui Container'>
-    <Grid columns={2} relaxed='very'>
-      <Grid.Column>
-      <List divided selection verticalAlign='middle'>
-        { this.notesList(this.state.filterText) }
-      </List>
-      </Grid.Column>
-      <Grid.Column>
-      <div>
-          <div id="comment-form-div">
-            <Form name="title">
-              <Form.Field>
-                <input type='text' placeholder="Title" value={this.state.title} onChange={this.onTitleChange}/>
-              </Form.Field>
-            </Form>
-            <Editor
-              editorState={this.state.editorState}
-              wrapperClassName="demo-wrapper"
-              editorClassName="editer-content"
-              placeholder="Enter some note..."
-              onEditorStateChange={this.onChange}
-              toolbar={{
-                options: ['inline','blockType','fontSize', 'colorPicker', 'list', 'link', 'emoji', 'image'],
-                inline: { inDropdown: true },
-                list: { inDropdown: true },
-                link: { inDropdown: true },
-                history: { inDropdown: true },
-              }}
-            />
-          </div>
-          <div id="comment-button-div">
-            <Button onClick={this.handleSubmit} id="comment-submit-button" color="teal">Save</Button>
-          </div>
-      </div>
-      </Grid.Column>
-    </Grid>
-
-
+          </div>)
+      }
     </div>
-    )}
-    </div>
-    </div>
-    )}
+  </div>)
+  }
 
 }
-
 const mapStateToProps = state => {
   return {
     currentUserObj: state.auth.userObj,

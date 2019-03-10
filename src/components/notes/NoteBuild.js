@@ -1,12 +1,9 @@
 import React from 'react'
 import { Button } from 'semantic-ui-react'
 
-import ReactDOM from 'react-dom';
 import { EditorState } from 'draft-js';
 import { Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
-
-import {convertToRaw} from 'draft-js';
 
 import './NoteBuild.css'
 
@@ -19,7 +16,6 @@ class NoteBuild extends React.Component {
 
   handleSubmit = (e) => {
     e.preventDefault()
-    var convertedData = convertToRaw(this.state.editorState.getCurrentContent())
     this.setState({editorState: EditorState.createEmpty()})
   }
 

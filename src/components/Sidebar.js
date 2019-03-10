@@ -25,11 +25,11 @@ class Sidebar extends Component {
     <Link to="/list" className="menu-item">
       My Notes
     </Link>
-    <Link to="/create" className="menu-item">
+    <Link to="/shared" className="menu-item">
       Shared
     </Link>
-    <Link to="/build" className="menu-item">
-      Build
+    <Link to="/create" className="menu-item">
+      Take Notes
     </Link>
     <Link to="/manage" className="menu-item">
       Manage

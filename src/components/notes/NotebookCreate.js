@@ -1,7 +1,6 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import Modal from '../Modal';
-import {Form, Dropdown, Input} from 'semantic-ui-react'
+import {Form, Input} from 'semantic-ui-react'
 
 
 class NotebookCreate extends React.Component {

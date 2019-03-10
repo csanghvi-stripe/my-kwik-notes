@@ -1,24 +1,11 @@
 import React, { Component } from "react";
-import { Dropdown, Image } from 'semantic-ui-react'
+import { Dropdown } from 'semantic-ui-react'
 import { connect } from 'react-redux';
 
 //this.props.onSignOutClick
 
-const options = [
-  { key: 'user', text: 'Account', icon: 'user' },
-  { key: 'settings', text: 'Settings', icon: 'settings' },
-  { key: 'sign-out', text: 'Sign Out', icon: 'sign out' },
-]
 
-class SignOut extends React.Component {
-  constructor(props){
-    super(props)
-    console.log("Current note is %o", this.props.currentNote);
-  }
-
-
-
-
+class UserOptions extends Component {
 
 
   render() {
@@ -48,4 +35,4 @@ const mapStateToProps = state => {
 export default connect(
   mapStateToProps,
   { }
-)(SignOut);
+)(UserOptions);

@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Link, Switch} from "react-router-dom";
+import { BrowserRouter as Router} from "react-router-dom";
 import { Message } from 'semantic-ui-react'
 import Header from './components/Header';
 import SideBar from './components/Sidebar';
-import NoteCreate from './components/notes/NoteCreate';
-import NoteList from './components/notes/NoteList';
 import NoteBuild from './components/notes/NoteBuild';
 import NoteManager from './components/notes/NoteManager';
 import { connect } from 'react-redux';
@@ -37,7 +35,8 @@ renderLoginFailure(){
   } else if (!this.props.isSignedIn) {
     return (
       <div className="ui one column stackable center">
-        <div clasName="column twelve wide">
+        <br/ >
+        <div >
         <Message negative>
           <Message.Header>Failed to login with reason: {this.props.loginError}.</Message.Header>
           <p>Maybe try clearing cache first?</p>
@@ -63,11 +62,7 @@ renderLoginFailure(){
             {this.renderLoginFailure()}
             {this.renderNoteManager()}
 
-          <Switch>
-            <Route path="/create" component={NoteCreate} />
-            <Route path="/list" component={NoteList} />
-            <Route path="/build" component={NoteBuild} />
-          </Switch>
+
         </div>
       </div>
       </Router>
