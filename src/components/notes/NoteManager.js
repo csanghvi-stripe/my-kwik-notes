@@ -34,7 +34,7 @@ const Notes = props => {
         <Grid columns={2} stackable>
           <Grid.Row verticalAlign='middle'>
             <Grid.Column>
-            <List.Header>{props.note.title}
+            <List.Header as='a'>{props.note.title}
               </List.Header>
             </Grid.Column>
             <Grid.Column>
@@ -111,6 +111,10 @@ class NoteManager extends React.Component {
     console.log('notebook selected', value);
     this.setState({currentNotebook:value})
     this.notebookUpdated(value);
+  }
+  setDefaultCurrentNotebook = () => {
+    this.setState({currentNotebook:"Default"})
+    this.notebookUpdated("Default");
   }
   onTitleChange(e){
     console.log("Title is %s", e.target.value);
@@ -243,9 +247,9 @@ class NoteManager extends React.Component {
 
         })
         .catch(error => {
-            console.log(error);
+            console.log("Error in getting notebooks %o",error);
             return;
-        });
+        })
     NoteService
         .listNotes(this.props.currentUserObj.user_email, this.state.currentNotebook)
         .then(notes => {
@@ -253,9 +257,9 @@ class NoteManager extends React.Component {
             return;
         })
         .catch(error => {
-            console.log(error);
+            console.log('Error in getting notes %o',error);
             return;
-        });
+        })
   }
 
 
@@ -350,7 +354,7 @@ render() {
             selection
              options={dditems.concat(this.state.notebooks)} value={this.state.currentNotebook} onChange={this.setCurrentNotebook}/>
            {this.state.currentNotebook === 'Create' && (
-      <NotebookCreate createNewNotebook={(value)=>this.createNewNotebook(value)}/>
+      <NotebookCreate createNewNotebook={(value)=>this.createNewNotebook(value)} setCurrentNotebook={()=>this.setDefaultCurrentNotebook()}/>
       )}
         </Grid.Column>
         <Grid.Column width = {8}>

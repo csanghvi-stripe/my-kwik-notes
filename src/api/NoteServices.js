@@ -1,5 +1,7 @@
-'use strict';
-
+require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+   require('dotenv').load();
+ }
 
 // package references
 
@@ -7,11 +9,32 @@
 const axios =require('axios');
 
 
+const axiosApi = axios.create({
+   baseURL: (process.env.APP_BASE_URL !== undefined) ? process.env.APP_BASE_URL : 'http://localhost:4000/api/v1/'
+ })
+
+axiosApi.interceptors.request.use(
+  (config) => {
+    let token = sessionStorage.getItem('jwt');
+    console.log("JWT token is %o", token)
+
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${ token }`;
+    }
+
+    return config;
+  },
+
+  (error) => {
+    console.log("Error in setting header %o", error);
+    return Promise.reject(error);
+  }
+);
+
 // db options
 
 
-const baseApiUrl = 'http://localhost:4000/api/v1/notes';
-const userApiUrl = 'http://localhost:4000/api/v1/users';
+
 
 
 const addNotebook = (user_email, notebook) => {
@@ -20,8 +43,8 @@ const addNotebook = (user_email, notebook) => {
       const data = new FormData();
       data.append('user_email',JSON.stringify(user_email));
       data.append('notebook',JSON.stringify(notebook));
-        axios
-            .post(`${userApiUrl}/addnotebook`, data)
+        axiosApi
+            .post(`users/addnotebook`, data)
             .then((result) => {
                 resolve(result.data);
             })
@@ -39,12 +62,12 @@ const getNotebooks = (user_email) => {
     return new Promise((resolve, reject) => {
       const data = new FormData();
       data.append('user_email',JSON.stringify(user_email));
-        axios
-            .post(`${userApiUrl}/getnotebooks`, data)
+        axiosApi
+            .post('users/getnotebooks', data)
             .then((result) => {
                 resolve(result.data);
             })
-            .catch(error => {
+            .catch((error) => {
                 console.log(error);
                 reject(error.message);
             });
@@ -69,8 +92,8 @@ const addNote = (title, description, content, user_email, notebook, tags = []) =
       data.append('user_email',JSON.stringify(user_email));
       data.append('notebook',JSON.stringify(notebook));
       console.log("Requesting to create for user with %o", user_email)
-        axios
-            .post(`${baseApiUrl}/add`, data)
+        axiosApi
+            .post(`notes/add`, data)
             .then((result) => {
                 resolve(result.data);
             })
@@ -90,8 +113,8 @@ const addNote = (title, description, content, user_email, notebook, tags = []) =
 const findNote = (id) => {
 
     return new Promise((resolve, reject) => {
-        axios
-            .get(`${baseApiUrl}/${id}`)
+        axiosApi
+            .get(`notes/${id}`)
             .then(response => {
                 resolve(response.data);
                 return;
@@ -105,28 +128,12 @@ const findNote = (id) => {
 };
 
 
-const findNotesByTitle = (title) => {
-
-    return new Promise((resolve, reject) => {
-        axios
-            .get(`${baseApiUrl}/notes?title=${title}`)
-            .then(response => {
-                resolve(response.data);
-                return;
-            })
-            .catch(error => {
-                reject(error.message);
-                return;
-            });
-    });
-
-};
 
 const listNotes = (user_email, notebook) => {
 
     return new Promise((resolve, reject) => {
-        axios
-            .get(`${baseApiUrl}?user_email=${user_email}&notebook=${notebook}`)
+        axiosApi
+            .get(`notes?user_email=${user_email}&notebook=${notebook}`)
             .then(response => {
                 resolve(response.data);
                 return;
@@ -146,8 +153,8 @@ const listNotes = (user_email, notebook) => {
 const removeNote = (id) => {
 
     return new Promise((resolve, reject) => {
-        axios
-            .delete(`${baseApiUrl}/notes/${id}`)
+        axiosApi
+            .delete(`notes/notes/${id}`)
             .then(() => {
                 resolve();
                 return;
@@ -173,8 +180,8 @@ const updateNote = (note) => {
   //TODO: Update with user id
 
     return new Promise((resolve, reject) => {
-        axios
-            .post(`${baseApiUrl}/update/${note._id}`, data)
+        axiosApi
+            .post(`notes/update/${note._id}`, data)
             .then(() => {
                 resolve();
                 return;
@@ -190,18 +197,15 @@ const updateNote = (note) => {
 
 
 const login = (userToken) => {
-  console.log("User is %o", userToken);
   const data = new FormData();
 
   data.append('token',userToken);
-  //TODO: Update with user id
-  console.log("Data sending is %o", data.token);
 
     return new Promise((resolve, reject) => {
         axios
-            .post(`${userApiUrl}/login`, data)
+            .post(`http://localhost:4000/login`, data)
             .then((rsp) => {
-              console.log(rsp);
+              console.log("Received rsp is %o", rsp);
                 resolve(rsp);
                 return;
             })

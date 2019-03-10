@@ -11,7 +11,6 @@ import NoteCreate from './components/notes/NoteCreate';
 import NoteList from './components/notes/NoteList';
 import NoteBuild from './components/notes/NoteBuild';
 import NoteManager from './components/notes/NoteManager';
-import history from './history';
 import { connect } from 'react-redux';
 import './App.css';
 
@@ -40,7 +39,7 @@ renderNoteManager() {
     return (
     <div>
 
-      <Router history={history}>
+      <Router>
         <div>
 
           {this.renderSidebar()}

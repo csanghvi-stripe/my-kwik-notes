@@ -1,8 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Modal from '../Modal';
-import history from '../../history';
-import {Dropdown} from 'semantic-ui-react'
+import {Dropdown, Icon} from 'semantic-ui-react'
 
 
 class NoteRemove extends React.Component {
@@ -64,9 +63,9 @@ class NoteRemove extends React.Component {
       <div className="right floated content">
         <Dropdown icon='setting' floating button className='icon'>
           <Dropdown.Menu>
-            <Dropdown.Item onClick={this.setShow}>Delete</Dropdown.Item>
-            <Dropdown.Item>Share</Dropdown.Item>
-            <Dropdown.Item>Change Notebook</Dropdown.Item>
+            <Dropdown.Item icon='trash' text='Delete' onClick={this.setShow}/>
+            <Dropdown.Item icon='share alternate' text='Share'/>
+            <Dropdown.Item icon='exchange' text='Change Notebook'/>
           </Dropdown.Menu>
         </Dropdown>
       {this.state.show === true && (

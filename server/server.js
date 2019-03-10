@@ -4,19 +4,35 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const notesRoutes = express.Router();
 const usersRoutes = express.Router();
+const appRoutes = express.Router();
 const notebooksRoutes = express.Router();
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const checkAuth = require('./checkAuth');
+require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+   require('dotenv').load();
+ }
 
 
-const PORT = 4000;
+function generateToken(userObj) {
+  //1. Dont use password and other sensitive fields
+  //2. Use fields that are useful in other parts of the
+  //app/collections/models
+  return token = jwt.sign(userObj, process.env.JWT_SECRET, {
+     expiresIn: 60 * 60 * 24 // expires in 24 hours
+  });
+}
+
+
 const formidable = require('formidable');
 
 const {OAuth2Client} = require('google-auth-library');
-const client = new OAuth2Client('370698994318-k21ec6kug4arcs8pfe67r9jhct5piemv.apps.googleusercontent.com');
+const client = new OAuth2Client(process.env.CLIENT_ID);
 async function verify(token) {
   const ticket = await client.verifyIdToken({
       idToken: token,
-      audience: "370698994318-k21ec6kug4arcs8pfe67r9jhct5piemv.apps.googleusercontent.com",  // Specify the CLIENT_ID of the app that accesses the backend
+      audience: [process.env.CLIENT_ID, process.env.OTHER_CLIENT_ID]  // Specify the CLIENT_ID of the app that accesses the backend
       // Or, if multiple clients access the backend:
       //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
   });
@@ -78,7 +94,7 @@ notesRoutes.route('/').get(function(req, res) {
 });
 
 
-usersRoutes.route('/login').post(async function(req, res) {
+appRoutes.route('/').post(async function(req, res) {
   console.log("Received Login Req");
   new formidable.IncomingForm().parse(req, async (err, fields, files) => {
     if (err) {
@@ -103,14 +119,16 @@ usersRoutes.route('/login').post(async function(req, res) {
           new_user.save()
             .then(n => {
               console.log("status %o", n);
-              res.status(200).json(userObj);
+              var token = generateToken(user);
+              res.status(200).json({user:userObj, token:token});
             })
             .catch(err => {
               console.log("Failed with err", err);
               res.status(400).send('adding new User failed');
             });
         } else {
-          res.status(200).json(userObj);
+          var token = generateToken(userObj);
+          res.status(200).json({user:userObj, token:token});
         }
       });
 
@@ -244,13 +262,14 @@ notesRoutes.route('/update/:id').post(function(req, res) {
 
 app.use(bodyParser.json());
 app.use(cors());
+app.use('/api/v1',checkAuth);
 app.use('/api/v1/notes', notesRoutes);
-
 app.use('/api/v1/users', usersRoutes);
-
 app.use('/api/v1/notebooks', notebooksRoutes);
+app.use('/login', appRoutes);
 
 
-app.listen(PORT, function() {
-  console.log("Server is running on Port: " + PORT);
+
+app.listen(process.env.SERVER_PORT, function() {
+  console.log("Server is running on Port: " + process.env.SERVER_PORT);
 });

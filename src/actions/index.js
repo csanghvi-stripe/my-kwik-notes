@@ -15,10 +15,11 @@ export const signIn = userId => {
 };
 */
 
-export const signIn = userId => async (dispatch, getState) => {
+export const signIn = userToken => async (dispatch, getState) => {
   try {
-  const response = await NoteServices.login( userId );
-  dispatch({ type: SIGN_IN, payload: response.data });
+  const response = await NoteServices.login( userToken );
+  sessionStorage.setItem('jwt', response.data.token);
+  dispatch({ type: SIGN_IN, payload: response.data.user });
 } catch(err){
   console.log("IN action creator %o", err);
   dispatch({ type: SIGN_IN_FAILURE, payload: err });

@@ -22,6 +22,7 @@ class NotebookCreate extends React.Component {
     this.setState({
       show:false
     })
+    this.props.setCurrentNotebook();
   }
 
   onNameShow = (e)=>{
