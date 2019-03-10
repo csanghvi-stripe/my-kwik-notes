@@ -1,4 +1,3 @@
-import faker from 'faker'
 import React, { Component } from "react";
 import { Dropdown, Image } from 'semantic-ui-react'
 import { connect } from 'react-redux';
@@ -18,13 +17,7 @@ class SignOut extends React.Component {
   }
 
 
-  renderTrigger() {
-    return (
-        <span>
-          <Image avatar src={faker.internet.avatar()} /> {this.props.currentUserObj.user_email}
-        </span>
-    );
-  }
+
 
 
 
