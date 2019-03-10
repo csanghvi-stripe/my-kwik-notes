@@ -394,7 +394,7 @@ render() {
             <Button primary onClick={this.createNewNote}>Create First Note</Button>
           </Segment>)
           : (<div className='ui Container'>
-            <Grid columns={2} relaxed='very'>
+            <Grid container stretched columns={2} stretched>
               <Grid.Column>
                 <List divided selection verticalAlign='middle'>
                   {this.notesList(this.state.filterText)}
@@ -408,33 +408,38 @@ render() {
                         <input type='text' placeholder="Title" value={this.state.title} onChange={this.onTitleChange}/>
                       </Form.Field>
                     </Form>
-                    <Editor editorState={this.state.editorState} wrapperClassName="demo-wrapper" editorClassName="editer-content" placeholder="Enter some note..." onEditorStateChange={this.onChange} toolbar={{
-                        options: [
-                          'inline',
-                          'blockType',
-                          'fontSize',
-                          'colorPicker',
-                          'list',
-                          'link',
-                          'emoji',
-                          'image'
-                        ],
-                        inline: {
-                          inDropdown: true
-                        },
-                        list: {
-                          inDropdown: true
-                        },
-                        link: {
-                          inDropdown: true
-                        },
-                        history: {
-                          inDropdown: true
-                        }
+                    <Editor editorState={this.state.editorState}
+                            wrapperClassName="demo-wrapper"
+                            editorClassName="demo-editor"
+                            placeholder="Enter some note..."
+                            onEditorStateChange={this.onChange}
+                            toolbar={{
+                                    options: [
+                                      'inline',
+                                      'blockType',
+                                      'fontSize',
+                                      'colorPicker',
+                                      'list',
+                                      'link',
+                                      'emoji',
+                                      'image'
+                                    ],
+                                    inline: {
+                                      inDropdown: true
+                                    },
+                                    list: {
+                                      inDropdown: true
+                                    },
+                                    link: {
+                                      inDropdown: true
+                                    },
+                                    history: {
+                                      inDropdown: true
+                                    }
                       }}/>
                   </div>
-                  <div id="comment-button-div">
-                    <Button onClick={this.handleSubmit} id="comment-submit-button" color="teal">Save</Button>
+                  <div id="comment-button-div" verticalAlign='right'>
+                    <Button className='ui right floated' onClick={this.handleSubmit} id="comment-submit-button" color="teal">Save</Button>
                   </div>
                 </div>
               </Grid.Column>
