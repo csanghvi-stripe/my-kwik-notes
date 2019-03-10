@@ -1,50 +1,26 @@
 {
-  "name": "client",
-  "version": "0.1.0",
-  "private": true,
+  "name": "my-kwik-notes",
+  "version": "1.0.0",
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
   "dependencies": {
-    "axios": "^0.18.0",
-    "body-parser": "^1.18.3",
-    "cors": "^2.8.5",
-    "dotenv": "^6.2.0",
-    "draft-js": "^0.10.5",
-    "express": "^4.16.4",
-    "faker": "^4.1.0",
-    "flv.js": "^1.4.2",
-    "formidable": "^1.2.1",
-    "fs": "0.0.1-security",
-    "google-auth-library": "^3.1.0",
-    "jsonwebtoken": "^8.5.0",
-    "lodash": "^4.17.11",
-    "moment": "^2.24.0",
-    "mongoose": "^5.4.0",
-    "react": "^16.6.3",
-    "react-burger-menu": "^2.6.5",
-    "react-dom": "^16.6.3",
-    "react-draft-wysiwyg": "^1.13.2",
-    "react-modal": "^3.8.1",
-    "react-moment": "^0.8.4",
-    "react-redux": "^5.1.1",
-    "react-router-dom": "^4.3.1",
-    "react-scripts": "2.1.1",
-    "redux": "^4.0.1",
-    "redux-form": "^7.4.2",
-    "redux-thunk": "^2.3.0",
-    "semantic-ui-react": "^0.85.0"
+    "concurrently": "^4.1.0"
   },
+  "devDependencies": {},
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+  "client": "cd client && npm start",
+  "server": "cd server && npm start",
+  "start": "concurrently \"npm run server\" \"npm run client\""
   },
-  "eslintConfig": {
-    "extends": "react-app"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csanghvi/my-kwik-notes.git"
   },
-  "browserslist": [
-    ">0.2%",
-    "not dead",
-    "not ie <= 11",
-    "not op_mini all"
-  ]
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/csanghvi/my-kwik-notes/issues"
+  },
+  "homepage": "https://github.com/csanghvi/my-kwik-notes#readme"
 }
