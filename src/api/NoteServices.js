@@ -1,7 +1,3 @@
-require('dotenv').config();
-if (process.env.NODE_ENV !== 'production') {
-   require('dotenv').load();
- }
 
 // package references
 
@@ -10,7 +6,7 @@ const axios =require('axios');
 
 
 const axiosApi = axios.create({
-   baseURL: (process.env.APP_BASE_URL !== undefined) ? process.env.APP_BASE_URL : 'http://localhost:4000/api/v1/'
+   baseURL: (process.env.REACT_APP_BASE_URL !== undefined) ? process.env.REACT_APP_BASE_URL : 'http://localhost:4000/api/v1/'
  })
 
 axiosApi.interceptors.request.use(
@@ -203,7 +199,7 @@ const login = (userToken) => {
 
     return new Promise((resolve, reject) => {
         axios
-            .post(`http://localhost:4000/login`, data)
+            .post(`${process.env.REACT_APP_LOGIN_URL}`, data)
             .then((rsp) => {
               console.log("Received rsp is %o", rsp);
                 resolve(rsp);
