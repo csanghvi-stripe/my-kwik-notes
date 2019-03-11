@@ -34,7 +34,7 @@ renderNoteManager() {
 renderLoginFailure(){
   if (this.props.isSignedIn === null) {
     return null;
-  } else if (!this.props.isSignedIn) {
+  } else if (this.props.loginError !== null) {
     return (
       <div className="ui one column stackable center">
         <br/ >

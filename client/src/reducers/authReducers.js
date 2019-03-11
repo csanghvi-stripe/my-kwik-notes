@@ -13,7 +13,7 @@ export default (state = INTIAL_STATE, action) => {
     case SIGN_OUT:
       return { ...state, isSignedIn: false, userObj: null };
     case SIGN_IN_FAILURE:
-      return { ...state, isSignedIn: false, loginError: action.payload };
+      return { ...state, loginError: action.payload };
     default:
       return state;
   }
