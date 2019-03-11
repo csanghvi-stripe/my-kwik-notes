@@ -23,6 +23,7 @@ class NoteEdits extends React.Component {
   }
 
   componentDidMount() {
+    //console.log("componentDidMount %o", this.props);
     if (this.props.note){
       this.setState({
         title:this.props.note.title
@@ -47,6 +48,17 @@ class NoteEdits extends React.Component {
     }
 
   }
+
+  componentWillReceiveProps(nextProps) {
+    //console.log("componentWillReceiveProps %o", nextProps);
+    if (nextProps.note){
+      this.setState({
+        title:nextProps.note.title
+      })
+      this.setEditorContent(nextProps.note.description, JSON.parse(nextProps.note.content))
+    }
+  }
+
   onTitleChange(e){
     this.setState({title:e.target.value});
   }

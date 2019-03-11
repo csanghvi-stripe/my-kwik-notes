@@ -247,8 +247,9 @@ class NoteManager extends React.Component {
 
   }
 
-  renderNoteEditor(){
+  renderNoteEditor = () =>{
     const currentNote=this.getCurrentNote();
+    console.log("Current Note received is %o", currentNote);
     if (currentNote){
     return (
       <NoteEdit note={currentNote} handleSave={this.handleSave}/>
