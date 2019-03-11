@@ -1,6 +1,9 @@
+//<Dropdown.Item> <Link to={`/notes/${this.props.currentNote}`} className='ui edit icon'> Open</Link></Dropdown.Item>
+
 import React from 'react';
 import Modal from '../Modal';
 import {Dropdown} from 'semantic-ui-react'
+import { Link } from 'react-router-dom';
 
 
 class NoteOptions extends React.Component {
@@ -56,6 +59,8 @@ class NoteOptions extends React.Component {
   }
 
 
+
+
   render() {
     return (
 
@@ -65,6 +70,7 @@ class NoteOptions extends React.Component {
             <Dropdown.Item icon='trash' text='Delete' onClick={this.setShow}/>
             <Dropdown.Item icon='share alternate' text='Share'/>
             <Dropdown.Item icon='exchange' text='Change Notebook'/>
+            <Dropdown.Item icon='edit' text='Edit'/>
           </Dropdown.Menu>
         </Dropdown>
       {this.state.show === true && (

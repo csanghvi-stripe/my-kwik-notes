@@ -2,15 +2,11 @@
 import React from 'react'
 import Moment from 'react-moment';
 
-import { EditorState, ContentState } from 'draft-js';
-import { Editor} from 'react-draft-wysiwyg';
-import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { connect } from 'react-redux';
 
-import {Form,Dropdown, Header, Input, Icon, Container, Button, Divider, Grid, Segment, List } from 'semantic-ui-react'
-import { convertFromRaw, convertToRaw } from 'draft-js';
+import {Dropdown, Header, Input, Icon, Container, Button, Divider, Grid, Segment, List } from 'semantic-ui-react'
 import NoteOptions from './NoteOptions';
-
+import NoteEdit from './NoteEdit';
 import NotebookCreate from './NotebookCreate';
 
 
@@ -83,20 +79,17 @@ class NoteManager extends React.Component {
       this.selectNote = this.selectNote.bind(this);
       this.notesList = this.notesList.bind(this);
       this.createNewNote = this.createNewNote.bind(this);
-      this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleSave = this.handleSave.bind(this);
       this.setCurrentNote = this.setCurrentNote.bind(this);
       this.setCurrentNotebook = this.setCurrentNotebook.bind(this);
-      this.onTitleChange = this.onTitleChange.bind(this);
       this.onChangeFilterText = this.onChangeFilterText.bind(this);
       this.notebookUpdated = this.notebookUpdated.bind(this);
       this.state = {
           filterText:'',
           notes:[],
           notebooks:[],
-          editorState: EditorState.createEmpty(),
           currentNote:'',
-          currentNotebook:'Default',
-          title:''
+          currentNotebook:'Default'
       }
 
   }
@@ -112,9 +105,6 @@ class NoteManager extends React.Component {
   setDefaultCurrentNotebook = () => {
     this.setState({currentNotebook:"Default"})
     this.notebookUpdated("Default");
-  }
-  onTitleChange(e){
-    this.setState({title:e.target.value});
   }
 
   onChangeFilterText(e) {
@@ -139,8 +129,6 @@ class NoteManager extends React.Component {
             .then(notes => {
                 this.setState({notes});
                 this.setCurrentNote(newNote.id);
-                this.setState({title:''});
-                this.setState({ editorState: EditorState.createEmpty()});
             })
             .catch(error => console.log(error));
     })
@@ -195,9 +183,7 @@ class NoteManager extends React.Component {
                           if (id === this.state.currentNote){
                             this.setState({
                               notes:notes,
-                              editorState: EditorState.createEmpty(),
-                              currentNote:'',
-                              title:''
+                              currentNote:''
                             });
                           } else {
                             this.setState({notes});
@@ -228,23 +214,7 @@ class NoteManager extends React.Component {
         });
   }
 
-  setEditorContent (text, contentData) {
-    if (contentData.hasOwnProperty("blocks")){
-      /*
-      const contentState = ContentState.createFromBlockArray(contentData.blocks, contentData.entityMap);
-      const editorState = EditorState.push(this.state.editorState, contentState);
-      this.setState({ editorState});
-     */
-       const content  = convertFromRaw(contentData);
-       this.setState({editorState: EditorState.createWithContent(content)});
 
-    } else {
-       const contentState = ContentState.createFromText(text);
-
-      const editorState = EditorState.push(this.state.editorState, contentState);
-      this.setState({ editorState});
-    }
-  }
 
   componentDidMount() {
     NoteService
@@ -274,42 +244,34 @@ class NoteManager extends React.Component {
             console.log('Error in getting notes %o',error);
             return;
         })
+
   }
 
+  renderNoteEditor(){
+    const currentNote=this.getCurrentNote();
+    if (currentNote){
+    return (
+      <NoteEdit note={currentNote} handleSave={this.handleSave}/>
+    )
+    }
+  }
 
   selectNote(id) {
     this.setCurrentNote(id)
     var note = this.state.notes.find(note => {return note._id === id});
-    console.log(note);
     note.updated = Date.now();
-    this.setEditorContent(note.description, JSON.parse(note.content));
-    this.setState({title:note.title});
 
   }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    var convertedData = convertToRaw(this.state.editorState.getCurrentContent())
+  getCurrentNote = () => {
+    console.log("Current NOte id is %o ", this.state.currentNote);
+    const note= this.state.notes.find(element => {return element._id === this.state.currentNote});
+    console.log("returning current note %o & length of notes is ", note, this.state.notes.length);
+    return note;
+  }
 
-    var note = {}
-    this.state.notes.map((currentNote, i) => {
-          if (currentNote._id === this.state.currentNote){
-              note = {
-                content: JSON.stringify(convertedData),
-                description:this.state.editorState
-                                      .getCurrentContent()
-                                      .getPlainText(),
-                title: this.state.title,
-                _id:this.state.currentNote
-              }
-              return note;
-
-          }
-    })
-
-    NoteService
-    .updateNote(note)
-    .then(() => {
+  handleSave = () => {
+    console.log("Note Updated");
         NoteService
             .listNotes(this.props.currentUserObj.user_email, this.state.currentNotebook)
             .then(notes => {
@@ -317,12 +279,8 @@ class NoteManager extends React.Component {
                 return;
             })
             .catch(error => console.log(error));
-    })
-    .catch(error => {
-        console.log(error);
-    });
-//    this.setState({editorState: EditorState.createEmpty()});
   }
+
 
   handleChange = (e) => {
     this.setState({[e.target.name]: e.target.value})
@@ -351,7 +309,8 @@ class NoteManager extends React.Component {
 
 
 render() {
-  return (<div className="ui container">
+  return (
+  <div className="ui container">
     <Divider hidden/>
     <div>
       <Container textAlign='right'>
@@ -383,7 +342,7 @@ render() {
       </Container>
     </div>
     <Divider hidden/>
-    <div>
+    <div className='ui equal height stretched'>
       {
         this.state.notes.length === 0
           ? (<Segment placeholder>
@@ -393,55 +352,16 @@ render() {
             </Header>
             <Button primary onClick={this.createNewNote}>Create First Note</Button>
           </Segment>)
-          : (<div className='ui Container'>
-            <Grid container stretched columns={2} stretched>
+          : (
+            <div className='ui container'>
+            <Grid container stretched columns={2}>
               <Grid.Column>
                 <List divided selection verticalAlign='middle'>
                   {this.notesList(this.state.filterText)}
                 </List>
               </Grid.Column>
               <Grid.Column>
-                <div>
-                  <div id="comment-form-div">
-                    <Form name="title">
-                      <Form.Field>
-                        <input type='text' placeholder="Title" value={this.state.title} onChange={this.onTitleChange}/>
-                      </Form.Field>
-                    </Form>
-                    <Editor editorState={this.state.editorState}
-                            wrapperClassName="demo-wrapper"
-                            editorClassName="demo-editor"
-                            placeholder="Enter some note..."
-                            onEditorStateChange={this.onChange}
-                            toolbar={{
-                                    options: [
-                                      'inline',
-                                      'blockType',
-                                      'fontSize',
-                                      'colorPicker',
-                                      'list',
-                                      'link',
-                                      'emoji',
-                                      'image'
-                                    ],
-                                    inline: {
-                                      inDropdown: true
-                                    },
-                                    list: {
-                                      inDropdown: true
-                                    },
-                                    link: {
-                                      inDropdown: true
-                                    },
-                                    history: {
-                                      inDropdown: true
-                                    }
-                      }}/>
-                  </div>
-                  <div id="comment-button-div" verticalAlign='right'>
-                    <Button className='ui right floated' onClick={this.handleSubmit} id="comment-submit-button" color="teal">Save</Button>
-                  </div>
-                </div>
+                {this.renderNoteEditor()}
               </Grid.Column>
             </Grid>
 

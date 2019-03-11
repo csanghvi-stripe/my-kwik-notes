@@ -1,8 +1,13 @@
 html,
 body {
   margin: 0;
+  height: 100%;
 }
 
+
+.ui.grid {
+    min-height: 100%;
+}
 
 .bm-item {
   display: inline-block;

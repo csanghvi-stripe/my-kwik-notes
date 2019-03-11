@@ -31,4 +31,5 @@ export const signOut = () => {
   return {
     type: SIGN_OUT
   };
+  sessionStorage.removeItem('jwt');
 };
