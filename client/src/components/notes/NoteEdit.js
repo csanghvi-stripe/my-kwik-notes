@@ -59,7 +59,7 @@ class NoteEdits extends React.Component {
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
     console.log("Compnent did update with %o", prevProps);
-    if (!this.props.isSignedIn) {
+    if (!this.props.isSignedIn && !this.props.note) {
       prevProps.history.push("/login");
     }
   }
