@@ -24,7 +24,6 @@ class NoteOptions extends React.Component {
   }
 
   deleteNote() {
-    console.log("Delete note with id %o", this.props.currentNote);
     this.props.onSelectRemove(this.props.currentNote);
 
     this.setState({
@@ -56,10 +55,7 @@ class NoteOptions extends React.Component {
     this.setState({
       noteEdit: true
     });
-    console.log(
-      "Note Editor called with current note as %o",
-      this.props.currentNote
-    );
+
     //return <Redirect to={`/notes/edit/${this.props.currentNote}`}/>
   };
 

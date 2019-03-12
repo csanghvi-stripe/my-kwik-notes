@@ -229,14 +229,12 @@ class NoteManager extends React.Component {
 
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    console.log("Compnent did update with %o", prevProps);
     if (!this.props.isSignedIn) {
       prevProps.history.push("/login");
     }
   }
 
   componentDidMount() {
-    console.log("Mounting with signed in value as %o", this.props.isSignedIn);
     if (this.props.isSignedIn) {
       NoteService.getNotebooks(this.props.currentUserObj.user_email)
         .then(rsp => {
@@ -285,20 +283,14 @@ class NoteManager extends React.Component {
   }
 
   getCurrentNote = () => {
-    console.log("Current NOte id is %o ", this.state.currentNote);
     const note = this.state.notes.find(element => {
       return element._id === this.state.currentNote;
     });
-    console.log(
-      "returning current note %o & length of notes is ",
-      note,
-      this.state.notes.length
-    );
+
     return note;
   };
 
   handleSave = () => {
-    console.log("Note Updated");
     NoteService.listNotes(
       this.props.currentUserObj.user_email,
       this.state.currentNotebook

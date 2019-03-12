@@ -20,7 +20,6 @@ class Logout extends React.Component {
 
   onSignOutClick = () => {
     this.auth.signOut();
-    console.log("Redirecting to /login");
     return <Redirect to="/login" />;
   };
 

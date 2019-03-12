@@ -19,6 +19,7 @@ function generateToken(userObj) {
   //1. Dont use password and other sensitive fields
   //2. Use fields that are useful in other parts of the
   //app/collections/models
+   console.log("UserObj received as payload in jwt %o", userObj);
   return token = jwt.sign(userObj, process.env.JWT_SECRET, {
      expiresIn: 60 * 60 * 24 // expires in 24 hours
   });
@@ -119,7 +120,7 @@ appRoutes.route('/').post(async function(req, res) {
           new_user.save()
             .then(n => {
               console.log("status %o", n);
-              var token = generateToken(user);
+              var token = generateToken(userObj);
               res.status(200).json({user:userObj, token:token});
             })
             .catch(err => {

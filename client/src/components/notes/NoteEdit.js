@@ -26,7 +26,6 @@ class NoteEdits extends React.Component {
   }
 
   componentDidMount() {
-    console.log("componentDidMount %o", this.props);
     if (!this.props.isSignedIn) {
       this.props.history.push("/login");
       return;
@@ -42,10 +41,8 @@ class NoteEdits extends React.Component {
       );
     } else {
       //this.props
-      console.log(this.props.match.params.id);
       NoteService.findNote(this.props.match.params.id)
         .then(rsp => {
-          console.log("received resp upon updateing %o", rsp);
           this.setState({
             title: rsp.title
           });
@@ -129,7 +126,6 @@ class NoteEdits extends React.Component {
     };
     NoteService.updateNote(currentNote)
       .then(rsp => {
-        console.log("received resp upon updateing %o", rsp);
         if (this.props.handleSave) {
           this.props.handleSave();
         }

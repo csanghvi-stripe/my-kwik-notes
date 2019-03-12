@@ -41,7 +41,6 @@ class Login extends React.Component {
 
   redirectNoteManager = () => {
     if (this.props.isSignedIn) {
-      console.log("Redirecting");
       return <Redirect to="/" />;
     }
   };
