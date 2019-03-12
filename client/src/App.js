@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { Router, Route, Switch, Redirect} from "react-router-dom";
 import { Message } from 'semantic-ui-react'
 import Header from './components/Header';
 import SideBar from './components/Sidebar';
 import NoteManager from './components/notes/NoteManager';
 import NoteEdit from './components/notes/NoteEdit';
 import { connect } from 'react-redux';
+import history from './history';
+import Login from './components/Login';
 import './App.css';
 
 
@@ -52,7 +54,7 @@ renderLoginFailure(){
     return (
     <div>
 
-      <Router>
+      <Router  history={history}>
         <div>
 
           {this.renderSidebar()}
@@ -62,10 +64,11 @@ renderLoginFailure(){
 
           <div className="ui container">
             {this.renderLoginFailure()}
-            {this.renderNoteManager()}
 
             <Switch>
-              <Route exact path="/notes/:id" component={NoteEdit} />
+              <Route exact path='/' component={NoteManager}/>
+              <Route exact path='/login' component={Login}/>
+              <Route exact path="/notes/edit/:id" component={NoteEdit} />
               <Route exact path="/notes/manage" component={NoteManager} />
             </Switch>
         </div>

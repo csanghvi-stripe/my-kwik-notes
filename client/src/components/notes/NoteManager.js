@@ -1,6 +1,8 @@
 //{id:1, title:"first test", description:"my content", content:{}},{id:2, title:"Second test", description:"my content", content:{}},{id:3, title:"Third test", description:"my content", content:{}}
 import React from 'react'
 import Moment from 'react-moment';
+import { Router, Route, Switch, Redirect} from "react-router-dom";
+
 
 import { connect } from 'react-redux';
 
@@ -215,8 +217,17 @@ class NoteManager extends React.Component {
   }
 
 
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    console.log("Compnent did update with %o", prevProps);
+    if(!this.props.isSignedIn){
+      prevProps.history.push('/login')
+      }
+  }
 
   componentDidMount() {
+    console.log("Mounting with signed in value as %o", this.props.isSignedIn);
+    if (this.props.isSignedIn){
     NoteService
         .getNotebooks(this.props.currentUserObj.user_email)
         .then(rsp => {
@@ -244,6 +255,8 @@ class NoteManager extends React.Component {
             console.log('Error in getting notes %o',error);
             return;
         })
+
+      }
 
   }
 
@@ -307,11 +320,50 @@ class NoteManager extends React.Component {
 
   onChange = (editorState) => this.setState({editorState});
 
+  renderCreateFirstNote = () => {
+    if (this.state.notes.length === 0){
+      return (<Segment placeholder>
+        <Header icon>
+          <Icon name='pdf file outline'/>
+          No notes are listed under this Notebook.
+        </Header>
+        <Button primary onClick={this.createNewNote}>Create First Note</Button>
+      </Segment>);
+    }
+  }
 
+ renderNoteDisplay = () => {
+   if (this.state.notes.length > 0){
+     return (
+       <div className='ui container'>
+         <Grid container stretched columns={2}>
+           <Grid.Column>
+              <List divided selection verticalAlign='middle'>
+                       {this.notesList(this.state.filterText)}
+              </List>
+           </Grid.Column>
+           <Grid.Column>
+                     {this.renderNoteEditor()}
+           </Grid.Column>
+          </Grid>
+
+        </div>
+      )
+
+   }
+ }
 
 render() {
   return (
+
   <div className="ui container">
+
+    {this.props.isSignedIn === null ? (
+      <div>
+      <Redirect to ='/login'/>
+      </div>
+    ) : (
+      <div>
     <Divider hidden/>
     <div>
       <Container textAlign='right'>
@@ -344,33 +396,12 @@ render() {
     </div>
     <Divider hidden/>
     <div className='ui equal height stretched'>
-      {
-        this.state.notes.length === 0
-          ? (<Segment placeholder>
-            <Header icon>
-              <Icon name='pdf file outline'/>
-              No notes are listed under this Notebook.
-            </Header>
-            <Button primary onClick={this.createNewNote}>Create First Note</Button>
-          </Segment>)
-          : (
-            <div className='ui container'>
-            <Grid container stretched columns={2}>
-              <Grid.Column>
-                <List divided selection verticalAlign='middle'>
-                  {this.notesList(this.state.filterText)}
-                </List>
-              </Grid.Column>
-              <Grid.Column>
-                {this.renderNoteEditor()}
-              </Grid.Column>
-            </Grid>
-
-          </div>)
-      }
+      { this.renderCreateFirstNote()}
+      { this.renderNoteDisplay()}
     </div>
-  </div>)
-  }
+  </div>
+      )}
+  </div>)}
 
 }
 const mapStateToProps = state => {

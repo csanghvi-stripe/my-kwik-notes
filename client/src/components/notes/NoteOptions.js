@@ -4,13 +4,15 @@ import React from 'react';
 import Modal from '../Modal';
 import {Dropdown} from 'semantic-ui-react'
 import { Link } from 'react-router-dom';
+import { Redirect} from "react-router-dom";
 
 
 class NoteOptions extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      show:false
+      show:false,
+      noteEdit:false
     }
   }
 
@@ -58,10 +60,20 @@ class NoteOptions extends React.Component {
       return 'Are you sure you want to delete this note?';
   }
 
+  renderNoteEditor = () => {
+    this.setState({
+      noteEdit:true
+    })
+    console.log("Note Editor called with current note as %o", this.props.currentNote);
+    //return <Redirect to={`/notes/edit/${this.props.currentNote}`}/>
+  }
 
 
 
   render() {
+    if (this.state.noteEdit === true) {
+      return <Redirect to={`/notes/edit/${this.props.currentNote}`} />
+    }
     return (
 
       <div className="right floated content">
@@ -70,7 +82,7 @@ class NoteOptions extends React.Component {
             <Dropdown.Item icon='trash' text='Delete' onClick={this.setShow}/>
             <Dropdown.Item icon='share alternate' text='Share'/>
             <Dropdown.Item icon='exchange' text='Change Notebook'/>
-            <Dropdown.Item icon='edit' text='Edit'/>
+            <Dropdown.Item icon='edit' text='Edit' onClick={this.renderNoteEditor}/>
           </Dropdown.Menu>
         </Dropdown>
       {this.state.show === true && (

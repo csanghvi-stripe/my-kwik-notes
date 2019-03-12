@@ -9,7 +9,7 @@ const INTIAL_STATE = {
 export default (state = INTIAL_STATE, action) => {
   switch (action.type) {
     case SIGN_IN:
-      return { ...state, isSignedIn: true, userObj: action.payload };
+      return { ...state, isSignedIn: true, userObj: action.payload, loginError: null};
     case SIGN_OUT:
       return { ...state, isSignedIn: false, userObj: null };
     case SIGN_IN_FAILURE:

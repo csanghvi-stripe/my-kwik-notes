@@ -20,7 +20,6 @@ export const signIn = userToken => async (dispatch, getState) => {
   const response = await NoteServices.login( userToken );
   sessionStorage.setItem('jwt', response.data.token);
   dispatch({ type: SIGN_IN, payload: response.data.user });
-  dispatch({ type: SIGN_IN_FAILURE, payload: null });
 } catch(err){
   console.log("IN action creator %o", err);
   dispatch({ type: SIGN_IN_FAILURE, payload: err });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { Redirect} from "react-router-dom";
 import { signIn, signOut } from '../actions';
 import UserOptions from './UserOptions'
 
@@ -34,6 +35,8 @@ class GoogleAuth extends React.Component {
 
   onSignOutClick = () => {
     this.auth.signOut();
+    console.log("Redirecting to /login");
+    return <Redirect to ='/login'/>
   };
 
   renderAuthButton() {
@@ -43,14 +46,7 @@ class GoogleAuth extends React.Component {
       return (
           <UserOptions onSignOutClick={this.onSignOutClick}/>
       );
-    } else {
-      return (
-        <button onClick={this.onSignInClick} className="ui red google button">
-          <i className="google icon" />
-          Sign In with Google
-        </button>
-      );
-    }
+    } 
   }
 
   render() {

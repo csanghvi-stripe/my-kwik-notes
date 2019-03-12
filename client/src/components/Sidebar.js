@@ -31,7 +31,7 @@ class Sidebar extends Component {
     <Link to="/create" className="menu-item">
       Take Notes
     </Link>
-    <Link to="/manage" className="menu-item">
+    <Link to="/notes/manage" className="menu-item">
       Manage
     </Link>
     </Menu>

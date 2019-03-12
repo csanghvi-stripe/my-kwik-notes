@@ -1,9 +1,11 @@
 import React from 'react';
-import {Form, Button} from 'semantic-ui-react'
+import {Form, Divider, Button, Message} from 'semantic-ui-react'
+import { Redirect} from "react-router-dom";
 import { EditorState, ContentState } from 'draft-js';
 import { Editor} from 'react-draft-wysiwyg';
 import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import { convertFromRaw, convertToRaw } from 'draft-js';
+import { connect } from 'react-redux';
 const NoteService = require('../../api/NoteServices');
 
 
@@ -16,6 +18,7 @@ class NoteEdits extends React.Component {
     this.state = {
       title:'',
       editorState: EditorState.createEmpty(),
+      saveStatus:''
     }
     this.onTitleChange = this.onTitleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -23,7 +26,7 @@ class NoteEdits extends React.Component {
   }
 
   componentDidMount() {
-    //console.log("componentDidMount %o", this.props);
+    console.log("componentDidMount %o", this.props);
     if (this.props.note){
       this.setState({
         title:this.props.note.title
@@ -76,41 +79,72 @@ class NoteEdits extends React.Component {
     }
   }
 
+  renderSaveStatus = () => {
+    if (this.state.saveStatus !== ''){
+      return (
+        <Message
+          info
+          header='Save Status'
+          content={this.state.saveStatus}
+          />
+      )
+    }
+  }
+
 
   handleSubmit = (e) => {
     e.preventDefault();
     var convertedData = convertToRaw(this.state.editorState.getCurrentContent())
-
+    var note_id = ''
+    if (this.props.note){
+      note_id = this.props.note._id
+    } else {
+      note_id = this.props.match.params.id
+    }
     var currentNote = {
         content: JSON.stringify(convertedData),
         description:this.state.editorState
                               .getCurrentContent()
                               .getPlainText(),
         title: this.state.title,
-        _id:this.props.note._id
+        _id:note_id
       }
     NoteService
     .updateNote(currentNote)
     .then((rsp) => {
       console.log("received resp upon updateing %o", rsp);
-      this.props.handleSave();
+      if (this.props.handleSave){
+        this.props.handleSave();
+      }
+      this.setState({
+        saveStatus:rsp.data
+      })
     })
     .catch(error => {
         console.log(error);
     });
   }
 
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    console.log("Compnent did update with %o", prevProps);
+    if(!this.props.isSignedIn){
+      prevProps.history.push('/login')
+      }
+  }
+
 
   render() {
     return (
 
-      <div className='ui equal height stretched'>
-        <div>
-          <Form name="title">
+        <div className='ui container stretched segment'>
+
+        <Form name="notes">
             <Form.Field>
               <input type='text' placeholder="Title" value={this.state.title} onChange={this.onTitleChange}/>
             </Form.Field>
-          </Form>
+          <Form.Field>
+            <p>
           <Editor editorState={this.state.editorState}
                   wrapperClassName="demo-wrapper"
                   editorClassName="demo-editor"
@@ -140,14 +174,30 @@ class NoteEdits extends React.Component {
                             inDropdown: true
                           }
             }}/>
-        </div>
-        <div id="comment-button-div" >
-          <Button className='ui right floated' onClick={this.handleSubmit} id="comment-submit-button" color="teal">Save</Button>
-        </div>
+        </p>
+            </Form.Field>
+          </Form>
+        <div>
+          <Button className='ui right floated' onClick={this.handleSubmit} color="teal">Save</Button>
+          <br/>
+          <br/>
+          {this.renderSaveStatus()}
       </div>
-
-    );
+    </div>
+  )
   }
+
 }
 
-export default NoteEdits;
+
+const mapStateToProps = state => {
+  return {
+    currentUserObj: state.auth.userObj,
+    isSignedIn: state.auth.isSignedIn
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  { }
+)(NoteEdits);

@@ -178,8 +178,8 @@ const updateNote = (note) => {
     return new Promise((resolve, reject) => {
         axiosApi
             .post(`notes/update/${note._id}`, data)
-            .then(() => {
-                resolve();
+            .then((rsp) => {
+                resolve(rsp);
                 return;
             })
             .catch(error => {
