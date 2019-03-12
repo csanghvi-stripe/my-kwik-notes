@@ -1,7 +1,7 @@
 //{id:1, title:"first test", description:"my content", content:{}},{id:2, title:"Second test", description:"my content", content:{}},{id:3, title:"Third test", description:"my content", content:{}}
 import React from "react";
 import Moment from "react-moment";
-import { Router, Route, Switch, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 
 import { connect } from "react-redux";
 
@@ -315,7 +315,6 @@ class NoteManager extends React.Component {
   };
 
   notesList(filterText) {
-    let counter = 0;
     this.state.notes.sort(function(a, b) {
       var dateA = new Date(a.updated),
         dateB = new Date(b.updated);
@@ -323,8 +322,6 @@ class NoteManager extends React.Component {
     });
     return this.state.notes.map((currentNote, i) => {
       if (currentNote.description.toLowerCase().indexOf(filterText) !== -1) {
-        counter = counter + 1;
-        currentNote.counter = counter;
         return (
           <Notes
             onNoteSelect={this.selectNote}
@@ -334,6 +331,8 @@ class NoteManager extends React.Component {
             key={i}
           />
         );
+      } else {
+        return null
       }
     });
   }
@@ -397,7 +396,7 @@ class NoteManager extends React.Component {
                         options={dditems.concat(this.state.notebooks)}
                         value={this.state.currentNotebook}
                         onChange={this.setCurrentNotebook}
-                      />{" "}
+                      />
                       {this.state.currentNotebook === "Create" && (
                         <NotebookCreate
                           createNewNotebook={value =>

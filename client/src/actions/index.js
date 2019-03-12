@@ -28,8 +28,9 @@ export const signIn = userToken => async (dispatch, getState) => {
 };
 
 export const signOut = () => {
+  sessionStorage.removeItem('jwt');
   return {
     type: SIGN_OUT
   };
-  sessionStorage.removeItem('jwt');
+
 };

@@ -1,7 +1,6 @@
 import React from "react";
 import Modal from "../Modal";
 import { Dropdown } from "semantic-ui-react";
-import { Link } from "react-router-dom";
 import { Redirect } from "react-router-dom";
 
 class NoteOptions extends React.Component {

@@ -1,6 +1,5 @@
 import React from "react";
-import { Form, Divider, Button, Message } from "semantic-ui-react";
-import { Redirect } from "react-router-dom";
+import { Form, Button, Message } from "semantic-ui-react";
 import { EditorState, ContentState } from "draft-js";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -28,6 +27,10 @@ class NoteEdits extends React.Component {
 
   componentDidMount() {
     console.log("componentDidMount %o", this.props);
+    if (!this.props.isSignedIn) {
+      this.props.history.push("/login");
+      return;
+    }
     if (this.props.note) {
       this.setState({
         title: this.props.note.title
@@ -50,6 +53,14 @@ class NoteEdits extends React.Component {
         .catch(error => {
           console.log(error);
         });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    // Typical usage (don't forget to compare props):
+    console.log("Compnent did update with %o", prevProps);
+    if (!this.props.isSignedIn) {
+      prevProps.history.push("/login");
     }
   }
 
@@ -126,13 +137,7 @@ class NoteEdits extends React.Component {
       });
   };
 
-  componentDidUpdate(prevProps) {
-    // Typical usage (don't forget to compare props):
-    console.log("Compnent did update with %o", prevProps);
-    if (!this.props.isSignedIn) {
-      prevProps.history.push("/login");
-    }
-  }
+
 
   render() {
     return (
@@ -147,7 +152,6 @@ class NoteEdits extends React.Component {
             />
           </Form.Field>
           <Form.Field>
-            <p>
               <Editor
                 editorState={this.state.editorState}
                 wrapperClassName="demo-wrapper"
@@ -179,7 +183,6 @@ class NoteEdits extends React.Component {
                   }
                 }}
               />
-            </p>
           </Form.Field>
         </Form>
         <div>
