@@ -33,7 +33,8 @@ class NoteEdits extends React.Component {
     }
     if (this.props.note) {
       this.setState({
-        title: this.props.note.title
+        title: this.props.note.title,
+        saveStatus:''
       });
       this.setEditorContent(
         this.props.note.description,
@@ -58,10 +59,10 @@ class NoteEdits extends React.Component {
 
   componentDidUpdate(prevProps) {
     // Typical usage (don't forget to compare props):
-    console.log("Compnent did update with %o", prevProps);
     if (!this.props.isSignedIn && !this.props.note) {
       prevProps.history.push("/login");
     }
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -74,7 +75,11 @@ class NoteEdits extends React.Component {
         nextProps.note.description,
         JSON.parse(nextProps.note.content)
       );
+      if( nextProps.note._id !== this.props.note._id ){
+        this.setState({saveStatus:''})
+      }
     }
+
   }
 
   onTitleChange(e) {
