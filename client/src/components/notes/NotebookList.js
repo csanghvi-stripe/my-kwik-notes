@@ -2,16 +2,13 @@ import React from "react";
 import Moment from "react-moment";
 import { Link } from "react-router-dom";
 import {
-  List,
-  Dropdown,
   Table,
   Segment,
-  Container,
-  Grid,
-  Button,
   Icon
 } from "semantic-ui-react";
 import { connect } from "react-redux";
+
+import NoteOptions from "./NoteOptions";
 const NoteService = require("../../api/NoteServices");
 
 /*
@@ -23,24 +20,7 @@ const Notelist = props => {
 };
 */
 
-const NotesList = props => {
 
-  return (
-    <List.Item key={props.note._id}>
-      <List.Content>
-        <List.Header>
-          <Link to={`/notes/edit/${props.note._id}`}>{props.note.title}</Link>
-        </List.Header>
-      </List.Content>
-      <List.Description size="small">
-        <Moment fromNow ago>
-          {props.note.updated}
-        </Moment>
-        &nbsp;ago
-      </List.Description>
-    </List.Item>
-  );
-};
 
 class NotebookList extends React.Component {
   constructor(props) {
@@ -108,18 +88,76 @@ class NotebookList extends React.Component {
     if (nb === this.state.currentNotebook) {
       return this.state.notes.map((currentNote, i) => {
         return (
-          <List divided key={i}>
-            <NotesList note={currentNote} key={i} />
-          </List>
+          <Table.Row key={i}>
+            <Table.Cell width="5"><Link to={`/notes/edit/${currentNote._id}`}>{currentNote.title}</Link></Table.Cell>
+            <Table.Cell width="1"/>
+            <Table.Cell textAlign='right' width="6">
+              <Moment fromNow ago>
+                      {currentNote.updated}
+              </Moment>
+              &nbsp;ago
+            </Table.Cell>
+            <Table.Cell textAlign='right' width="4">
+              <NoteOptions
+                onSelectRemove={this.onSelectRemove}
+                onNotebookChange={this.onNotebookChange}
+                currentNote={currentNote}
+              />
+            </Table.Cell>
+          </Table.Row>
+
         );
       });
     } else {
       return null;
     }
+  }
+
+  onNotebookChange = (currentNote, newNotebook) => {
+    if (currentNote.notebook!== newNotebook){
+      currentNote.notebook = newNotebook;
+      NoteService.updateNote(currentNote)
+        .then(rsp => {
+          NoteService.listNotes(this.props.currentUserObj.user_email, this.state.currentNotebook)
+            .then(notes => {
+              this.setState({ notes });
+              return;
+            })
+            .catch(error => {
+              console.log(error);
+              return;
+            });
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  }
+
+  onSelectRemove = id => {
+    NoteService.removeNote(id).then(rsp => {
+      if (rsp.data.status === "Success") {
+        //Update state.
+        NoteService.listNotes(
+          this.props.currentUserObj.user_email,
+          this.state.currentNotebook
+        )
+          .then(notes => {
+              this.setState({ notes });
+              return;
+          })
+          .catch(error => {
+            console.log("Error in getting notes %o", error);
+            return;
+          });
+      }
+    });
   };
+
 
   getNotebooks = (currentNotebook, key) => {
     return (
+      <React.Fragment key={key}>
       <Table.Row key={currentNotebook.value}>
         <Table.Cell width="5">{currentNotebook.value}</Table.Cell>
         <Table.Cell width="1">
@@ -129,10 +167,20 @@ class NotebookList extends React.Component {
             onClick={this.selectNotebook}
           />
         </Table.Cell>
-        <Table.Cell width="10" verticalAlign="bottom">
-          {this.renderList(currentNotebook.value)}
+        <Table.Cell width="6"/>
+        <Table.Cell textAlign='right' width="4">
+                  <Icon
+                    floating="true"
+                    button="true"
+                    name="setting"
+                    id={currentNotebook.value}
+                    onClick={this.selectNotebookAction}
+                  />
         </Table.Cell>
+
       </Table.Row>
+      {this.renderList(currentNotebook.value)}
+    </React.Fragment>
     );
   };
 
@@ -146,12 +194,13 @@ class NotebookList extends React.Component {
     return (
       <div className="ui container">
         <Segment>
-          <Table color="red" key="red">
+          <Table striped color="red" key="red">
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell width="5">Notebook</Table.HeaderCell>
                 <Table.HeaderCell width="1" />
-                <Table.HeaderCell width="10">Notes</Table.HeaderCell>
+                <Table.HeaderCell textAlign='right' width="6">Updated</Table.HeaderCell>
+                <Table.HeaderCell textAlign='right' width="4">Actions</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
             <Table.Body>{this.notebooksList()}</Table.Body>

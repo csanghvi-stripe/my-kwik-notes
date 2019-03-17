@@ -1,4 +1,5 @@
 //{id:1, title:"first test", description:"my content", content:{}},{id:2, title:"Second test", description:"my content", content:{}},{id:3, title:"Third test", description:"my content", content:{}}
+//Adding background color: style={{backgroundColor: '#D3D3D3'}}
 import React from "react";
 import Moment from "react-moment";
 import { Redirect } from "react-router-dom";
@@ -189,7 +190,7 @@ class NoteManager extends React.Component {
   }
 
   onNotebookChange = (currentNote, newNotebook) => {
-    if (currentNote.notebook!=newNotebook){
+    if (currentNote.notebook!==newNotebook){
       currentNote.notebook = newNotebook;
       NoteService.updateNote(currentNote)
         .then(rsp => {
