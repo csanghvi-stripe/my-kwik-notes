@@ -89,9 +89,9 @@ class NotebookList extends React.Component {
       return this.state.notes.map((currentNote, i) => {
         return (
           <Table.Row key={i}>
+            <Table.Cell width="4"/>
             <Table.Cell width="5"><Link to={`/notes/edit/${currentNote._id}`}>{currentNote.title}</Link></Table.Cell>
-            <Table.Cell width="1"/>
-            <Table.Cell textAlign='right' width="6">
+            <Table.Cell textAlign='right' width="3">
               <Moment fromNow ago>
                       {currentNote.updated}
               </Moment>
@@ -159,15 +159,15 @@ class NotebookList extends React.Component {
     return (
       <React.Fragment key={key}>
       <Table.Row key={currentNotebook.value}>
-        <Table.Cell width="5">{currentNotebook.value}</Table.Cell>
-        <Table.Cell width="1">
+        <Table.Cell width="4">{currentNotebook.value}</Table.Cell>
+        <Table.Cell width="5">
           <Icon
             name="angle right"
             id={currentNotebook.value}
             onClick={this.selectNotebook}
           />
         </Table.Cell>
-        <Table.Cell width="6"/>
+        <Table.Cell width="3"/>
         <Table.Cell textAlign='right' width="4">
                   <Icon
                     floating="true"
@@ -197,9 +197,9 @@ class NotebookList extends React.Component {
           <Table striped color="red" key="red">
             <Table.Header>
               <Table.Row>
-                <Table.HeaderCell width="5">Notebook</Table.HeaderCell>
-                <Table.HeaderCell width="1" />
-                <Table.HeaderCell textAlign='right' width="6">Updated</Table.HeaderCell>
+                <Table.HeaderCell width="4">Notebook</Table.HeaderCell>
+                <Table.HeaderCell width="5" />
+                <Table.HeaderCell textAlign='right' width="3">Updated</Table.HeaderCell>
                 <Table.HeaderCell textAlign='right' width="4">Actions</Table.HeaderCell>
               </Table.Row>
             </Table.Header>
