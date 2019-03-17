@@ -231,6 +231,7 @@ notesRoutes.route('/add').post(function(req, res) {
 
     let note = new Notes(body);
     note.user_email = user_email;
+
     note.notebook = notebook;
     note.save()
       .then(n => {
@@ -266,6 +267,7 @@ notesRoutes.route('/update/:id').post(function(req, res) {
         note.content = body.content;
         note.tags = body.tags;
         note.updated = Date.now();
+        note.notebook = body.notebook || note.notebook;
 
         note.save().then(n => {
             res.json('Notes updated');

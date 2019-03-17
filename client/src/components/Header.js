@@ -9,7 +9,7 @@ const Header = () => {
         Kwik-Notes
       </Link>
       <div className="right menu">
-        <Link to="/" className="item">
+        <Link to="/notes/list" className="item">
           My Notes
         </Link>
         <Logout />

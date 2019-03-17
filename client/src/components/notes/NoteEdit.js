@@ -5,9 +5,8 @@ import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { convertFromRaw, convertToRaw } from "draft-js";
 import { connect } from "react-redux";
-import './NoteBuild.css'
+import "./NoteEdit.css";
 const NoteService = require("../../api/NoteServices");
-
 
 class NoteEdits extends React.Component {
   constructor(props) {
@@ -33,7 +32,7 @@ class NoteEdits extends React.Component {
     if (this.props.note) {
       this.setState({
         title: this.props.note.title,
-        saveStatus:''
+        saveStatus: ""
       });
       this.setEditorContent(
         this.props.note.description,
@@ -59,12 +58,11 @@ class NoteEdits extends React.Component {
     if (!this.props.isSignedIn && !this.props.note) {
       prevProps.history.push("/login");
     }
-
   }
 
   componentWillReceiveProps(nextProps) {
-    //console.log("componentWillReceiveProps %o", nextProps);
     if (nextProps.note) {
+      //New note was clicked from manage notes
       this.setState({
         title: nextProps.note.title
       });
@@ -72,11 +70,25 @@ class NoteEdits extends React.Component {
         nextProps.note.description,
         JSON.parse(nextProps.note.content)
       );
-      if( nextProps.note._id !== this.props.note._id ){
-        this.setState({saveStatus:''})
+      if (nextProps.note._id !== this.props.note._id) {
+        this.setState({ saveStatus: "" });
+      }
+    } else {
+      //new note was created from sidebar
+      NoteService.findNote(nextProps.match.params.id)
+        .then(rsp => {
+          this.setState({
+            title: rsp.title
+          });
+          this.setEditorContent(rsp.description, JSON.parse(rsp.content));
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      if (nextProps.note._id !== this.props.note._id) {
+        this.setState({ saveStatus: "" });
       }
     }
-
   }
 
   onTitleChange(e) {
@@ -138,8 +150,6 @@ class NoteEdits extends React.Component {
       });
   };
 
-
-
   render() {
     return (
       <div className="ui container stretched segment">
@@ -152,44 +162,44 @@ class NoteEdits extends React.Component {
               onChange={this.onTitleChange}
             />
           </Form.Field>
-          <Form.Field>
-              <Editor
-                editorState={this.state.editorState}
-                wrapperClassName="demo-wrapper"
-                editorClassName="editer-content"
-                placeholder="Enter some note..."
-                onEditorStateChange={this.onChange}
-                toolbar={{
-                  options: [
-                    "inline",
-                    "blockType",
-                    "fontSize",
-                    "colorPicker",
-                    "list",
-                    "link",
-                    "emoji",
-                    "image"
-                  ],
-                  inline: {
-                    inDropdown: true
-                  },
-                  list: {
-                    inDropdown: true
-                  },
-                  link: {
-                    inDropdown: true
-                  },
-                  history: {
-                    inDropdown: true
-                  }
-                }}
-              />
+          <Form.Field className="textarea">
+            <Editor
+              editorState={this.state.editorState}
+              wrapperClassName="demo-wrapper"
+              editorClassName="editer-content"
+              placeholder="Enter some note...."
+              onEditorStateChange={this.onChange}
+              toolbar={{
+                options: [
+                  "inline",
+                  "blockType",
+                  "fontSize",
+                  "colorPicker",
+                  "list",
+                  "link",
+                  "emoji",
+                  "image"
+                ],
+                inline: {
+                  inDropdown: true
+                },
+                list: {
+                  inDropdown: true
+                },
+                link: {
+                  inDropdown: true
+                },
+                history: {
+                  inDropdown: true
+                }
+              }}
+            />
           </Form.Field>
         </Form>
-        <div>
+        <div id="note-button-div">
           <Button
             className="ui right floated"
-            id ='note-button-div'
+            id="note-submit-button"
             onClick={this.handleSubmit}
             color="teal"
           >

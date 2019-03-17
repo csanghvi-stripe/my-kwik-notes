@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import SideBar from "./components/Sidebar";
 import NoteManager from "./components/notes/NoteManager";
 import NoteEdit from "./components/notes/NoteEdit";
+import NotebookList from "./components/notes/NotebookList";
 import { connect } from "react-redux";
 import history from "./history";
 import Login from "./components/Login";
@@ -65,8 +66,9 @@ class App extends Component {
               <Switch>
                 <Route exact path="/" component={NoteManager} />
                 <Route exact path="/login" component={Login} />
-                <Route exact path="/notes/edit/:id" component={NoteEdit} />
+                <Route path="/notes/edit/:id" component={NoteEdit} />
                 <Route exact path="/notes/manage" component={NoteManager} />
+                <Route exact path="/notes/list" component={NotebookList} />
               </Switch>
             </div>
           </div>

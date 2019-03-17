@@ -82,7 +82,6 @@ const addNote = (
     data.append("note", JSON.stringify(note));
     data.append("user_email", JSON.stringify(user_email));
     data.append("notebook", JSON.stringify(notebook));
-    console.log("Requesting to create for user with %o", user_email);
     axiosApi
       .post(`notes/add`, data)
       .then(result => {
@@ -147,7 +146,6 @@ const removeNote = id => {
 // update note
 
 const updateNote = note => {
-  console.log("Note is %o", note);
   const data = new FormData();
 
   data.append("note", JSON.stringify(note));

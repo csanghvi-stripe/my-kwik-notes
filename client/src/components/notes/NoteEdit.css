@@ -1,6 +1,7 @@
 textarea {
   width: 100%;
-  height:150px;
+  height:550px;
+
 }
 
 #note-submit-button {
@@ -14,4 +15,5 @@ textarea {
 .editer-content {
   padding: .3em .6em;
   min-height: 20em;
+  background-color:'yellow';
 }

@@ -46,8 +46,9 @@ const Notes = props => {
             <Grid.Column>
               <List.Header>
                 <NoteOptions
-                  currentNote={props.note._id}
                   onSelectRemove={props.onSelectRemove}
+                  onNotebookChange={props.onNotebookChange}
+                  currentNote={props.note}
                 />
               </List.Header>
             </Grid.Column>
@@ -187,6 +188,27 @@ class NoteManager extends React.Component {
       });
   }
 
+  onNotebookChange = (currentNote, newNotebook) => {
+    if (currentNote.notebook!=newNotebook){
+      currentNote.notebook = newNotebook;
+      NoteService.updateNote(currentNote)
+        .then(rsp => {
+          NoteService.listNotes(this.props.currentUserObj.user_email, this.state.currentNotebook)
+            .then(notes => {
+              this.setState({ notes });
+              return;
+            })
+            .catch(error => {
+              console.log(error);
+              return;
+            });
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+  }
+
   onSelectRemove = id => {
     NoteService.removeNote(id).then(rsp => {
       if (rsp.data.status === "Success") {
@@ -263,12 +285,13 @@ class NoteManager extends React.Component {
           console.log("Error in getting notes %o", error);
           return;
         });
+    } else {
+      this.props.history.push("/login");
     }
   }
 
   renderNoteEditor = () => {
     const currentNote = this.getCurrentNote();
-    console.log("Current Note received is %o", currentNote);
     if (currentNote) {
       return <NoteEdit note={currentNote} handleSave={this.handleSave} />;
     }
@@ -318,6 +341,7 @@ class NoteManager extends React.Component {
           <Notes
             onNoteSelect={this.selectNote}
             onSelectRemove={this.onSelectRemove}
+            onNotebookChange={this.onNotebookChange}
             value={currentNote._id}
             note={currentNote}
             key={i}

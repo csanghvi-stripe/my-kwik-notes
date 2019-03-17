@@ -22,7 +22,7 @@ const Notes = new Schema({
     },
     updated: { type: Date, default: Date.now },
     notebook:{
-      type:[String]
+      type:String
     }
 },{ strict: false });
 
