@@ -201,7 +201,7 @@ class NoteEdits extends React.Component {
             className="ui right floated"
             id="note-submit-button"
             onClick={this.handleSubmit}
-            color="teal"
+            color="blue"
           >
             Save
           </Button>
