@@ -35,3 +35,9 @@ Client uses REACT components to add, delete, update, list Notes.
 -  *google-auth-library* for Google Oauth 2.0 Authentication
 -  *react-draft-wysiwyg* for implementing WYSYWIG note editer.
 -  *jsonwebtoken* for implementing authentication using Json web tokens
+
+
+### Hosting
+You can find this app at https://kwik-notes.com. Its hosted on a digital ocean droplet & uses LetsEncrypt certificates for SSL termination.
+App server is proxied behind NGINX webserver.
+
