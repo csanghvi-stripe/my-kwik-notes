@@ -11,11 +11,11 @@ Server exposes below API endpoints that are **protected** using JSON Web Token:
 |                |Notes                          |Notebooks                         |
 |----------------|-------------------------------|-----------------------------|
 |Add             |Post `/api/v1/notes/add`       | Post `/api/v1/users/addnotebooks` |
-|Get             |Get `/api/v1/notes/`           |Get `/api/v1/users/getnotebooks`  |
+|Get all              |Get `/api/v1/notes/`           |Get `/api/v1/users/getnotebooks`  |
 |Delete          |Delete `/api/v1/notes/delete/:id`     ||
 |Update          |Post/Put `/api/v1/notes/update/:id`     ||
-|Delete          |`/api/v1/notes/delete/:id`     ||
-|Delete          |`/api/v1/notes/delete/:id`     ||
+|Get one          |Get `/api/v1/notes/:id`     |Get `/api/v1/users/notebooks/:id`|
+
 
 **Unprotected route: /login** Browser sends user token from Google Auth, this endpoint receives the token & verifies it using OAuth2Client library. Once a user is verified, a user entry is created in DB & a JSON web token is generated using payload of userObj & sent back to the client.  
 
